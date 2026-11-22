@@ -24,7 +24,7 @@ function Dashboard() {
   const kpis = [
     { label: "Clientes cadastrados", value: state.clients.length, icon: Users },
     { label: "Atendimentos realizados", value: rows.filter((r) => r.c.messages.some((m) => m.sender === "assistente")).length, icon: MessagesSquare },
-    { label: "Aguardando resposta do cliente", value: rows.filter((r) => r.f && r.f.status !== "concluido").length, icon: Hourglass },
+    { label: "Aguardando resposta do cliente", value: rows.filter((r) => r.f && ["pendente", "programado", "enviando"].includes(r.f.status)).length, icon: Hourglass },
     { label: "Follow-ups programados", value: upcoming.length, icon: CalendarClock },
   ];
   return (

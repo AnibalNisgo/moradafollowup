@@ -12,5 +12,5 @@ export const fmtShort = (iso: string) => {
 };
 export const NI = "Não informado";
 export const statusLabel: Record<ClientStatus, string> = { novo: "Novo", em_atendimento: "Em atendimento", aguardando_cliente: "Aguardando cliente", qualificado: "Qualificado" };
-export const followLabel: Record<FollowupStatus, string> = { programado: "Programado", pendente: "Pendente", concluido: "Concluído" };
+export const followLabel: Record<FollowupStatus, string> = { programado: "Programado", pendente: "Pendente", concluido: "Concluído", enviando: "Enviando", cancelado: "Cancelado", falhou: "Falhou" };
 export const initials = (n: string | null) => (n ? n.split(" ").slice(0, 2).map((p) => p[0]).join("").toUpperCase() : "?");

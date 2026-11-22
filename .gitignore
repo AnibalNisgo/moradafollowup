@@ -16,6 +16,21 @@ dist-ssr
 .nitro
 *.local
 
+# Variáveis de ambiente e chaves privadas
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Diretórios padrão do WhatsApp Web
+.wwebjs_auth/
+.wwebjs_cache/
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

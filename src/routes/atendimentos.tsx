@@ -25,7 +25,7 @@ export const Route = createFileRoute("/atendimentos")({
 const SUGESTOES = ["Olá, estou procurando uma casa em Itapoá.", "Para morar, próximo à praia.", "Meu nome é Lucas Andrade", "Moro na Rua Mar Azul, 45 — Itapoá/SC"];
 
 function Central() {
-  const { state, now, typing, sendClientMessage, createConversation } = useDemo();
+  const { state, now, typing, sendClientMessage, createConversation, real } = useDemo();
   const { c: sel } = Route.useSearch();
   const nav = useNavigate({ from: "/atendimentos" });
   const [text, setText] = useState("");
@@ -41,7 +41,7 @@ function Central() {
       <aside className={cn("w-full shrink-0 flex-col border-r bg-card md:flex md:w-80", c ? "hidden" : "flex")}>
         <div className="flex items-center justify-between border-b px-4 py-3">
           <h1 className="text-sm font-semibold">Conversas</h1>
-          <Button size="sm" variant="outline" onClick={() => select(createConversation())}><Plus />Nova conversa</Button>
+          {!real && <Button size="sm" variant="outline" onClick={() => select(createConversation())}><Plus />Nova conversa</Button>}
         </div>
         <ul className="flex-1 divide-y overflow-y-auto">
           {sorted.map((x) => { const l = lastMessage(x); return (
@@ -65,7 +65,7 @@ function Central() {
             <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted xl:hidden" onClick={() => setShowInfo(!showInfo)}><Info className="size-4" /></button>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto bg-chat-bg"><MessageList messages={c.messages} typing={typing === c.id} /></div>
-          <div className="border-t bg-card p-3">
+          {!real && <div className="border-t bg-card p-3">
             <div className="mb-2 flex gap-1.5 overflow-x-auto">
               {SUGESTOES.map((s) => <button key={s} onClick={() => send(s)} className="shrink-0 rounded-full border px-2.5 py-1 text-[11px] text-muted-foreground hover:border-primary hover:text-primary">{s}</button>)}
             </div>
@@ -74,10 +74,10 @@ function Central() {
               <Button type="submit" size="icon" disabled={!text.trim() || !!typing}><SendHorizontal /></Button>
             </form>
             <p className="mt-1.5 text-[11px] text-muted-foreground">Simulação: respostas pré-configuradas, nenhuma mensagem é enviada.</p>
-          </div>
+          </div>}
         </section>
       ) : (
-        <div className="hidden flex-1 items-center justify-center bg-chat-bg text-sm text-muted-foreground md:flex">Selecione uma conversa ou inicie uma nova.</div>
+        <div className="hidden flex-1 items-center justify-center bg-chat-bg text-sm text-muted-foreground md:flex">{real ? "Selecione uma conversa." : "Selecione uma conversa ou inicie uma nova."}</div>
       )}
 
       {c && (
@@ -89,11 +89,11 @@ function Central() {
             <Field label="Telefone" value={c.phone} />
             <Field label="Endereço" value={c.address} />
             <Field label="Interesse" value={[c.interest, c.purpose].filter(Boolean).join(" · ") || null} />
-            <div><dt className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Resumo do atendimento</dt><dd className="mt-1 rounded-md bg-muted p-2.5 text-xs leading-relaxed">{buildSummary(c)}</dd></div>
+            <div><dt className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Resumo do atendimento</dt><dd className="mt-1 rounded-md bg-muted p-2.5 text-xs leading-relaxed">{real ? c.summary ?? "Não informado" : buildSummary(c)}</dd></div>
             <Field label="Última interação" value={c.messages.at(-1) ? fmtDateTime(c.messages.at(-1)!.at) : null} />
             <div><dt className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Próximo follow-up</dt>
               <dd className="mt-1 space-y-1 text-sm"><FollowPill s={f?.status ?? null} />
-                <p className="text-xs text-muted-foreground">{!f ? "Cliente respondeu por último." : f.status === "concluido" ? `Enviado em ${fmtDateTime(f.doneAt)}` : fmtDateTime(f.scheduledAt)}</p></dd></div>
+                <p className="text-xs text-muted-foreground">{!f ? "Nenhum retorno programado." : f.status === "concluido" ? `Enviado em ${fmtDateTime(f.doneAt)}` : fmtDateTime(f.scheduledAt)}</p></dd></div>
           </dl>
         </aside>
       )}

@@ -27,7 +27,7 @@ const fields = [["name", "Nome"], ["phone", "Telefone"], ["address", "Endereço"
 
 function Detalhe() {
   const { id } = Route.useParams();
-  const { state, now, updateClient } = useDemo();
+  const { state, now, updateClient, real } = useDemo();
   const c = state.clients.find((x) => x.id === id);
   const [edit, setEdit] = useState<Record<string, string> | null>(null);
   if (!c) return <div className="p-8 text-sm">Cliente não encontrado. <Link to="/clientes" className="text-primary">Voltar</Link></div>;
@@ -46,7 +46,7 @@ function Detalhe() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild><Link to="/atendimentos" search={{ c: c.id }}><MessageCircle />Abrir conversa</Link></Button>
-          <Button size="sm" onClick={() => setEdit(Object.fromEntries(fields.map(([k]) => [k, c[k] ?? ""])))}><Pencil />Editar dados</Button>
+          {!real && <Button size="sm" onClick={() => setEdit(Object.fromEntries(fields.map(([k]) => [k, c[k] ?? ""])))}><Pencil />Editar dados</Button>}
         </div>
       </div>
       <div className="grid gap-6 p-5 md:p-8 lg:grid-cols-5">
@@ -61,13 +61,13 @@ function Detalhe() {
             </dl>
           </Panel>
           <Panel title="Resumo automático" action={<Sparkles className="size-3.5 text-primary" />}>
-            <p className="p-4 text-sm leading-relaxed">{buildSummary(c)}</p>
+            <p className="p-4 text-sm leading-relaxed">{real ? c.summary ?? "Não informado" : buildSummary(c)}</p>
           </Panel>
           <Panel title="Próximo follow-up" action={<FollowPill s={f?.status ?? null} />}>
             <div className="p-4 text-sm">
-              {!f ? <p className="text-muted-foreground">Cliente respondeu por último — nenhum retorno pendente.</p>
+              {!f ? <p className="text-muted-foreground">Nenhum retorno programado.</p>
                 : f.status === "concluido" ? <p>Retorno enviado em <b className="font-medium">{fmtDateTime(f.doneAt)}</b>. Aguardando resposta.</p>
-                : <p>Previsto para <b className="font-medium">{fmtDateTime(f.scheduledAt)}</b> ({state.followupDays} dias após a última mensagem do atendimento).</p>}
+                : <p>Data programada <b className="font-medium">{fmtDateTime(f.scheduledAt)}</b></p>}
             </div>
           </Panel>
         </div>

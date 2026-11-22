@@ -14,7 +14,7 @@ const nav = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (r) => r.location.pathname });
-  const { reset } = useDemo();
+  const { reset, real, local, setReal, whatsapp } = useDemo();
   const active = (to: string) => (to === "/" ? path === "/" : path.startsWith(to));
   const doReset = () => { if (confirm("Restaurar os dados iniciais da demonstração?")) { reset(); toast.success("Demonstração restaurada"); } };
   return (
@@ -32,14 +32,19 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
         <div className="border-t p-3">
-          <div className="mb-2 rounded-md px-2.5 text-[11px] leading-relaxed text-muted-foreground">Ambiente de demonstração com dados fictícios.</div>
-          <button onClick={doReset} className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"><RotateCcw className="size-3.5" />Restaurar demonstração</button>
+          <div className="mb-2 rounded-md px-2.5 text-[11px] leading-relaxed text-muted-foreground" role="status">{real ? `WhatsApp: ${whatsapp}` : "Ambiente de demonstração com dados fictícios."}</div>
+          {!real && <button onClick={doReset} className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"><RotateCcw className="size-3.5" />Restaurar demonstração</button>}
+          {local && <button onClick={() => setReal(!real)} className="w-full rounded-md px-2.5 py-1.5 text-left text-xs text-muted-foreground hover:bg-sidebar-accent hover:text-foreground">{real ? "Voltar à demonstração" : "Ativar modo real"}</button>}
         </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b bg-sidebar px-4 py-3 md:hidden">
           <span className="font-semibold tracking-tight">Atende<span className="text-primary">.IA</span></span>
-          <button onClick={doReset} className="flex items-center gap-1 text-xs text-muted-foreground"><RotateCcw className="size-3.5" />Restaurar</button>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            {real && <span role="status">{`WhatsApp: ${whatsapp}`}</span>}
+            {!real && <button onClick={doReset} className="flex items-center gap-1"><RotateCcw className="size-3.5" />Restaurar</button>}
+            {local && <button onClick={() => setReal(!real)}>{real ? "Voltar à demonstração" : "Ativar modo real"}</button>}
+          </div>
         </header>
         <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
         <nav className="grid grid-cols-4 border-t bg-sidebar md:hidden">

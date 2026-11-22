@@ -23,6 +23,8 @@ export interface Client {
   status: ClientStatus;
   awaiting: AwaitingField;
   messages: Message[];
+  summary?: string | null;
+  followups?: StoredFollowup[];
 }
 
 export interface DemoState {
@@ -30,11 +32,19 @@ export interface DemoState {
   followupDays: number;
 }
 
-export type FollowupStatus = "programado" | "pendente" | "concluido";
+export type FollowupStatus = "programado" | "pendente" | "concluido" | "enviando" | "cancelado" | "falhou";
 export interface FollowupInfo {
   status: FollowupStatus;
   baseAt: string; // última mensagem do atendimento
   scheduledAt: string;
   daysWithoutReply: number;
   doneAt?: string;
+}
+
+export interface StoredFollowup {
+  id: string;
+  status: Exclude<FollowupStatus, "pendente" | "concluido"> | "enviado";
+  baseAt: string;
+  scheduledAt: string;
+  doneAt: string | null;
 }
